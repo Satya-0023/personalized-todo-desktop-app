@@ -11,6 +11,7 @@ This app is designed to stay pinned to the right side of your desktop, giving yo
 - **Always Accessible**: Keeps your tasks just a click away without taking up your taskbar space.
 - **Dark Mode UI**: A gorgeous, glassmorphic dark theme tailored for modern setups.
 - **Task Management**: Easily add new tasks, mark them as completed, or delete them.
+- **Continuous Task Alarms**: Set a reminder date/time and the app will trigger a system-wide continuous audio alarm and a Windows desktop notification until you mark the task as complete!
 
 ## 🛠️ Built With
 
