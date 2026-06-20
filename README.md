@@ -12,6 +12,8 @@ This app is designed to stay pinned to the right side of your desktop, giving yo
 - **Dark Mode UI**: A gorgeous, glassmorphic dark theme tailored for modern setups.
 - **Task Management**: Easily add new tasks, mark them as completed, or delete them.
 - **Continuous Task Alarms**: Set a reminder date/time and the app will trigger a system-wide continuous audio alarm and a Windows desktop notification until you mark the task as complete!
+- **Live Time Tracking**: Start and stop a live timer on any task to accurately track how much time you are spending on it.
+- **Performance Dashboard**: Flip the widget over to view your daily and all-time performance metrics, including total tasks completed and time spent per category.
 
 ## 🛠️ Built With
 
