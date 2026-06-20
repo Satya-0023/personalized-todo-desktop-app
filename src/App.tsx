@@ -3,6 +3,7 @@ import { motion } from 'framer-motion';
 import { Focus, GripHorizontal } from 'lucide-react';
 import { TaskList } from '@/components/tasks/TaskList';
 import { useSettingsStore } from '@/store/useSettingsStore';
+import { useTaskStore } from '@/store/useTaskStore';
 
 export default function App() {
   const { fontSize, darkMode } = useSettingsStore();
@@ -12,6 +13,84 @@ export default function App() {
     medium: 'text-sm',
     large: 'text-base',
   }[fontSize];
+
+  const { tasks, markReminderTriggered } = useTaskStore();
+  const [hasActiveAlarm, setHasActiveAlarm] = useState(false);
+
+  // Time checking loop
+  useEffect(() => {
+    if ('Notification' in window && Notification.permission !== 'granted') {
+      Notification.requestPermission();
+    }
+
+    const interval = setInterval(() => {
+      const now = new Date();
+      let activeAlarm = false;
+
+      tasks.forEach((task) => {
+        if (task.status === 'pending' && task.reminderAt) {
+          const reminderTime = new Date(task.reminderAt);
+          if (now >= reminderTime) {
+            activeAlarm = true; // Alarm condition met
+
+            // Trigger desktop notification ONCE
+            if (!task.reminderTriggered) {
+              if ('Notification' in window && Notification.permission === 'granted') {
+                new Notification('Task Reminder', {
+                  body: task.title,
+                });
+              }
+              markReminderTriggered(task.id);
+            }
+          }
+        }
+      });
+
+      setHasActiveAlarm(activeAlarm);
+    }, 5000); // Check every 5 seconds
+
+    return () => clearInterval(interval);
+  }, [tasks, markReminderTriggered]);
+
+  // Continuous Alarm Sound Loop
+  useEffect(() => {
+    let audioCtx: AudioContext;
+    let intervalId: NodeJS.Timeout;
+
+    if (hasActiveAlarm) {
+      audioCtx = new (window.AudioContext || (window as any).webkitAudioContext)();
+      
+      const playBeep = () => {
+        if (audioCtx.state === 'suspended') audioCtx.resume();
+        
+        const oscillator = audioCtx.createOscillator();
+        const gainNode = audioCtx.createGain();
+        
+        // Classic digital alarm sound
+        oscillator.type = 'square';
+        oscillator.frequency.setValueAtTime(880, audioCtx.currentTime); 
+        oscillator.frequency.setValueAtTime(1046.50, audioCtx.currentTime + 0.2); 
+        
+        gainNode.gain.setValueAtTime(0, audioCtx.currentTime);
+        gainNode.gain.linearRampToValueAtTime(0.05, audioCtx.currentTime + 0.05); // Volume
+        gainNode.gain.linearRampToValueAtTime(0, audioCtx.currentTime + 0.4);
+        
+        oscillator.connect(gainNode);
+        gainNode.connect(audioCtx.destination);
+        
+        oscillator.start();
+        oscillator.stop(audioCtx.currentTime + 0.4);
+      };
+
+      playBeep(); // Play immediately
+      intervalId = setInterval(playBeep, 1000); // Repeat every 1 second
+    }
+
+    return () => {
+      if (intervalId) clearInterval(intervalId);
+      if (audioCtx) audioCtx.close().catch(() => {});
+    };
+  }, [hasActiveAlarm]);
 
   return (
     <div className={`${darkMode ? 'dark' : ''} w-screen h-screen overflow-hidden p-2`}>

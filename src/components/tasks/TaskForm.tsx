@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { motion } from 'framer-motion';
-import { Plus, Calendar, Clock, Tag, Flag } from 'lucide-react';
+import { Plus, Calendar, Clock, Tag, Flag, Bell } from 'lucide-react';
 import { Priority } from '@/types';
 import { useTaskStore } from '@/store/useTaskStore';
 import { Button } from '@/components/ui/Button';
@@ -17,6 +17,7 @@ export function TaskForm({ onClose }: TaskFormProps) {
   const [priority, setPriority] = useState<Priority>('medium');
   const [dueDate, setDueDate] = useState('');
   const [dueTime, setDueTime] = useState('');
+  const [reminderAt, setReminderAt] = useState('');
   const [categoryId, setCategoryId] = useState<string | null>(null);
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -29,6 +30,7 @@ export function TaskForm({ onClose }: TaskFormProps) {
       priority,
       dueDate: dueDate || null,
       dueTime: dueTime || null,
+      reminderAt: reminderAt ? new Date(reminderAt).toISOString() : null,
       categoryId,
     });
 
@@ -37,6 +39,7 @@ export function TaskForm({ onClose }: TaskFormProps) {
     setPriority('medium');
     setDueDate('');
     setDueTime('');
+    setReminderAt('');
     setCategoryId(null);
     onClose?.();
   };
@@ -123,6 +126,19 @@ export function TaskForm({ onClose }: TaskFormProps) {
             className="w-full px-4 py-2.5 bg-white/5 border border-white/10 rounded-xl text-white focus:outline-none focus:border-violet-500/50 transition-all [color-scheme:dark]"
           />
         </div>
+      </div>
+
+      {/* Reminder */}
+      <div>
+        <label className="flex items-center gap-2 text-sm text-white/60 mb-2">
+          <Bell size={14} /> Reminder
+        </label>
+        <input
+          type="datetime-local"
+          value={reminderAt}
+          onChange={(e) => setReminderAt(e.target.value)}
+          className="w-full px-4 py-2.5 bg-white/5 border border-white/10 rounded-xl text-white focus:outline-none focus:border-violet-500/50 transition-all [color-scheme:dark]"
+        />
       </div>
 
       {/* Category */}

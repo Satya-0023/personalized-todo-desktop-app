@@ -20,6 +20,8 @@ export interface Task {
   status: TaskStatus;
   createdAt: string;
   completedAt: string | null;
+  reminderAt?: string | null;
+  reminderTriggered?: boolean;
 }
 
 export interface Note {

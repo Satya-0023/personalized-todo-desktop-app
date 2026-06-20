@@ -20,6 +20,7 @@ interface TaskState {
   updateTask: (id: string, updates: Partial<Task>) => void;
   deleteTask: (id: string) => void;
   toggleTask: (id: string) => void;
+  markReminderTriggered: (id: string) => void;
   
   // Category actions
   addCategory: (category: Omit<Category, 'id'>) => void;
@@ -79,6 +80,7 @@ export const useTaskStore = create<TaskState>((set, get) => ({
       status: 'pending',
       createdAt: new Date().toISOString(),
       completedAt: null,
+      reminderTriggered: false,
     };
     set((state) => {
       const tasks = [...state.tasks, newTask];
@@ -118,6 +120,16 @@ export const useTaskStore = create<TaskState>((set, get) => ({
         }
         return t;
       });
+      storage.set('tasks', tasks);
+      return { tasks };
+    });
+  },
+  
+  markReminderTriggered: (id) => {
+    set((state) => {
+      const tasks = state.tasks.map((t) => 
+        t.id === id ? { ...t, reminderTriggered: true } : t
+      );
       storage.set('tasks', tasks);
       return { tasks };
     });
