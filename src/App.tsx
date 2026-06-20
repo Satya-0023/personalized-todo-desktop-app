@@ -1,7 +1,8 @@
 import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
-import { Focus, GripHorizontal } from 'lucide-react';
+import { Focus, GripHorizontal, BarChart3, ListTodo } from 'lucide-react';
 import { TaskList } from '@/components/tasks/TaskList';
+import { Dashboard } from '@/components/dashboard/Dashboard';
 import { useSettingsStore } from '@/store/useSettingsStore';
 import { useTaskStore } from '@/store/useTaskStore';
 
@@ -16,6 +17,7 @@ export default function App() {
 
   const { tasks, markReminderTriggered } = useTaskStore();
   const [hasActiveAlarm, setHasActiveAlarm] = useState(false);
+  const [view, setView] = useState<'tasks' | 'dashboard'>('tasks');
 
   // Time checking loop
   useEffect(() => {
@@ -107,19 +109,27 @@ export default function App() {
         >
           <div className="w-4" /> {/* Spacer for centering */}
           <GripHorizontal size={16} className="text-white/20 group-hover:text-white/40 transition-colors" />
-          <button 
-            onClick={() => window.close()}
-            className="text-white/20 hover:text-red-400 transition-colors cursor-pointer"
-            style={{ WebkitAppRegion: 'no-drag' } as React.CSSProperties}
-            title="Close Widget"
-          >
-            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
-          </button>
+          <div className="flex items-center gap-3" style={{ WebkitAppRegion: 'no-drag' } as React.CSSProperties}>
+            <button
+              onClick={() => setView(view === 'tasks' ? 'dashboard' : 'tasks')}
+              className="text-white/20 hover:text-violet-400 transition-colors cursor-pointer"
+              title={view === 'tasks' ? "View Dashboard" : "View Tasks"}
+            >
+              {view === 'tasks' ? <BarChart3 size={14} /> : <ListTodo size={14} />}
+            </button>
+            <button 
+              onClick={() => window.close()}
+              className="text-white/20 hover:text-red-400 transition-colors cursor-pointer"
+              title="Close Widget"
+            >
+              <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+            </button>
+          </div>
         </div>
 
         {/* Content Area */}
         <main className="flex-1 overflow-hidden p-4">
-          <TaskList />
+          {view === 'tasks' ? <TaskList /> : <Dashboard />}
         </main>
 
         {/* Glass Effect Overlay */}

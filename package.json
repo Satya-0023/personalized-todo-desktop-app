@@ -8,7 +8,7 @@
     "dev": "vite",
     "dev:electron": "cross-env NODE_ENV=development concurrently \"npm run dev\" \"wait-on tcp:5173 && electron .\"",
     "build": "vite build",
-    "build:desktop": "vite build && electron-packager . FocusBoard --platform=win32 --arch=x64 --out=release5 --overwrite",
+    "build:desktop": "vite build && electron-packager . FocusBoard --platform=win32 --arch=x64 --out=release6 --overwrite",
     "preview": "vite preview"
   },
   "build": {

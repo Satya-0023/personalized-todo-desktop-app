@@ -21,6 +21,7 @@ interface TaskState {
   deleteTask: (id: string) => void;
   toggleTask: (id: string) => void;
   markReminderTriggered: (id: string) => void;
+  updateTaskTime: (id: string, additionalSeconds: number) => void;
   
   // Category actions
   addCategory: (category: Omit<Category, 'id'>) => void;
@@ -81,6 +82,7 @@ export const useTaskStore = create<TaskState>((set, get) => ({
       createdAt: new Date().toISOString(),
       completedAt: null,
       reminderTriggered: false,
+      timeSpent: 0,
     };
     set((state) => {
       const tasks = [...state.tasks, newTask];
@@ -129,6 +131,16 @@ export const useTaskStore = create<TaskState>((set, get) => ({
     set((state) => {
       const tasks = state.tasks.map((t) => 
         t.id === id ? { ...t, reminderTriggered: true } : t
+      );
+      storage.set('tasks', tasks);
+      return { tasks };
+    });
+  },
+
+  updateTaskTime: (id, additionalSeconds) => {
+    set((state) => {
+      const tasks = state.tasks.map((t) => 
+        t.id === id ? { ...t, timeSpent: (t.timeSpent || 0) + additionalSeconds } : t
       );
       storage.set('tasks', tasks);
       return { tasks };

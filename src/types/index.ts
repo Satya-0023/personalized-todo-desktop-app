@@ -22,6 +22,7 @@ export interface Task {
   completedAt: string | null;
   reminderAt?: string | null;
   reminderTriggered?: boolean;
+  timeSpent?: number;
 }
 
 export interface Note {
